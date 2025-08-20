@@ -1,4 +1,4 @@
-# Internship Task: Automated Deployment of a Full-Stack Serverless Application  
+# Automated Deployment of a Full-Stack Serverless Application  
 
 📌 **Levi9 Internship Task**  
 
