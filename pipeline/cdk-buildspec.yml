@@ -1,0 +1,25 @@
+version: 0.2
+phases:
+  install:
+    runtime-version:
+      python: 3.13
+      nodejs: 18
+    commands:
+      - cd infrastructure
+      - pip install -r requirements.txt
+      - npm install -g aws-cdk
+      - cdk --version
+      - echo "$GIT_BRANCH"
+      - |
+        if [ "$GIT_BRANCH" = "develop" ]; then
+          ENVIRONMENT="dev"
+        elif [ "$GIT_BRANCH" = "main" ]; then
+          ENVIRONMENT="main"
+        else
+          ENVIRONMENT="feature"
+        fi
+      - echo "$ENVIRONMENT"
+  build:
+    commands:
+      - export DOCKER_IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - cdk deploy MainStack-"$ENVIRONMENT" -c environment="$ENVIRONMENT" --require-approval never

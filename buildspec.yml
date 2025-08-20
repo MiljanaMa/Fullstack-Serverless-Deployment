@@ -1,0 +1,22 @@
+version: 0.2
+variable:
+  
+phases:
+  install: 
+    runtime-version:
+      nodejs: 16
+    commands:
+      - cd react-app
+      - npm install
+  pre_build:
+    commands:
+      - npm test
+  build:
+    commands:
+      - npm run build
+  post_build:
+    commands:
+      - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 821025350821.dkr.ecr.eu-west-1.amazonaws.com
+      - docker build -t docker-image-repo:$CODEBUILD_RESOLVED_SOURCE_VERSION .
+      - docker tag docker-image-repo:$CODEBUILD_RESOLVED_SOURCE_VERSION 821025350821.dkr.ecr.eu-west-1.amazonaws.com/docker-image-repo:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push 821025350821.dkr.ecr.eu-west-1.amazonaws.com/docker-image-repo:$CODEBUILD_RESOLVED_SOURCE_VERSION

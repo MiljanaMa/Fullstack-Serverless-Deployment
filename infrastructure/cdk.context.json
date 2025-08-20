@@ -1,0 +1,11 @@
+{
+  "hosted-zone:account=821025350821:domainName=int9demo2025.com:region=eu-west-1": {
+    "Id": "/hostedzone/Z02539262AJ4WJMQYEUOW",
+    "Name": "int9demo2025.com."
+  },
+  "availability-zones:account=821025350821:region=eu-west-1": [
+    "eu-west-1a",
+    "eu-west-1b",
+    "eu-west-1c"
+  ]
+}

@@ -1,0 +1,23 @@
+version: 0.2
+variable:
+
+phases:
+  pre_build:
+    commands:
+      - cd react-app
+      - mkdir build
+      - mv "$CODEBUILD_SRC_DIR_ReactAppBuild"/* ./build/
+  build:
+    commands:
+      - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 821025350821.dkr.ecr.eu-west-1.amazonaws.com
+      - docker build -t docker-image-repo:$CODEBUILD_RESOLVED_SOURCE_VERSION .
+      - docker tag docker-image-repo:$CODEBUILD_RESOLVED_SOURCE_VERSION 821025350821.dkr.ecr.eu-west-1.amazonaws.com/docker-image-repo:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push 821025350821.dkr.ecr.eu-west-1.amazonaws.com/docker-image-repo:$CODEBUILD_RESOLVED_SOURCE_VERSION
+  post_build:
+    commands:
+      - echo "Triggering image scan in ECR"
+      - aws ecr start-image-scan --repository-name docker-image-repo --image-id imageTag=$CODEBUILD_RESOLVED_SOURCE_VERSION --region eu-west-1
+      - echo "Waiting for the scan to complete"
+      - sleep 10
+      - echo "Fetching scan findings"
+      - aws ecr describe-image-scan-findings --repository-name docker-image-repo --image-id imageTag=$CODEBUILD_RESOLVED_SOURCE_VERSION --region eu-west-1
